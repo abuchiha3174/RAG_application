@@ -81,25 +81,42 @@ USER: How can I use RAG with LangChain for document QA?
 
 ---
 
+## 📌 Key Code Components
+
+### 🧩 `DataIngestionLoader`
+* Handles both file and URL input  
+* Supports `.pdf`, `.txt`, `.csv`, `.json`, `.docx`, `.html`, and web pages  
+* Internally uses LangChain’s document loaders
+
+### 🧠 `SchemaNER`
+* LLM-powered schema-based entity extraction using OpenAI  
+* Returns structured JSON fields used in prompts
+
+### 🧾 `PromptBuilder`
+* Dynamically injects extracted fields into a system/user prompt  
+* Enables context-rich, personalized responses
+
+---
+
 ## 💼 Why This Matters
 
-This project showcases the real-world application of:
+This project demonstrates:
 
-* Designing reusable prompt interfaces
-* Making LLMs interpretable and context-aware
-* Using extraction + inference workflows in AI systems
-* Extending static NLP to dynamic field-driven interactions
-* Laying foundation for tools like auto agents, tutors, and RAG pipelines
+* 🛠 How to build LLM applications with structured input/output  
+* 🧠 How to extract interpretable, reusable metadata using schema prompts  
+* ⚙️ How to combine prompt engineering, context injection, and LangChain pipelines  
+* 📊 How to log and evaluate generation quality using prompt traces  
+* 🚀 How to set up full-stack AI workflows (LLM + web UI + document ingestion)
 
 ---
 
 ## 🧱 Planned Additions
 
-* Full RAG pipeline with document chunking + embeddings
-* Multi-model orchestration (OpenAI, Ollama, Claude)
-* Streamlit version with interactive UI
-* LangSmith integration for trace + eval
-* API endpoints for scalable deployment
+* [ ] Document chunking + vector embeddings (full RAG)  
+* [ ] LangSmith or Phoenix tracing integration  
+* [ ] Streamlit/Gradio UI version  
+* [ ] PDF/JSON export of results  
+* [ ] API endpoints for backend-only integration  
 
 ---
 
@@ -107,12 +124,17 @@ This project showcases the real-world application of:
 
 Feel free to reach out if you're looking for a hands-on AI Engineer / Researcher with:
 
-* LLM application design experience
-* Prompt + context engineering skills
-* Practical full-stack deployment knowledge
+* Experience building LLM applications from scratch  
+* Knowledge of prompt + context engineering  
+* Practical backend + frontend integration skills  
+* A passion for building real-world, user-facing AI tools
 
 ---
 
 ## 📄 License
 
 MIT
+
+---
+
+> Built with ❤️ using LangChain, Flask, OpenAI, and too many cups of ☕.
