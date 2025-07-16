@@ -1,0 +1,61 @@
+conda create -p mlenv python=3.12 -y
+
+# ✅ TODO: Complete Vector DB Ingestion Pipeline Integration
+
+# 🎯 Goal:
+# Enhance the RAG pipeline to avoid redundant embeddings and enable retrieval from Pinecone
+# by checking if a document has already been ingested before chunking and storing.
+
+# ✅ Current Progress:
+# - File/URL input is handled via DataIngestionLoader
+# - Raw content is loaded and injected into LLM context
+# - Prompt is dynamically constructed and sent to OpenAI
+# - Pinecone index is initialized and LLM response is shown
+
+# 🛠️ Work Left: Build document ingestion deduplication pipeline
+
+# 🔁 Final Ingestion Pipeline Plan:
+
+#     📄 File / URL
+#          ↓
+#     🧠 DataIngestionLoader (returns raw Document(s))
+#          ↓
+#     🔑 Compute doc_id (e.g., MD5 hash of full file content or joined text)
+#          ↓
+#     ❓ Check Pinecone vector DB for doc_id in metadata
+#         → ✅ Found:
+#             ↳ Skip ingestion (already embedded)
+#         → ❌ Not found:
+#             ↳ Chunk document (e.g., RecursiveCharacterTextSplitter)
+#             ↳ Embed each chunk (OpenAI, HuggingFace, etc.)
+#             ↳ Upsert to Pinecone
+#                • Include metadata: doc_id, chunk_index, source, chunk_size, etc.
+
+# 🔧 Optional Enhancements to Add After Core Flow:
+# - Store original file name and upload timestamp in metadata
+# - Store chunk size / overlap in metadata for versioning
+# - Support force-overwrite or refresh ingestion mode
+# - Add SQLite or Redis cache to track previously ingested files without hitting Pinecone
+# - Log ingestion results to a dashboard or log file
+
+
+
+
+
+
+# TO DO ----> RAG
+    # fields = ner.extract(user_message)  # returns a dict
+
+    # # Optional: retrieve context if user didn’t provide any
+    # if not context_docs:
+    #     context_docs = retriever.get_relevant_documents(user_message)
+
+    # # Format context section
+    # context_section = pb.build_context_section(context_docs)
+
+    # # Add context to fields
+    # fields["context_section"] = context_section
+    # fields["question"] = user_message  # add the original user question
+
+    # # Build the prompt
+    # prompt_messages = pb.get_prompt(**fields)

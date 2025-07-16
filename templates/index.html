@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChatBot Interface</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            background-color: #fff;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 30px;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        pre {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .card p {
+            margin: 10px 0;
+        }
+
+        a {
+            color: #0066cc;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>LangChain ChatBot</h1>
+    <form method="post" enctype="multipart/form-data">
+        <label for="message" class="label">Enter a message or URL:</label>
+        <input type="text" id="message" name="message" placeholder="Ask something..." value="{{ user_message or '' }}">
+        
+        <label for="file" class="label">Or upload a file:</label>
+        <input type="file" id="file" name="file">
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if error_message %}
+        <div class="error">Error: {{ error_message }}</div>
+    {% endif %}
+
+    {% if pinecone_status %}
+        <div class="success">Pinecone Index Status: {{ pinecone_status }}</div>
+    {% endif %}
+
+    {% if bot_response %}
+        <div class="section">
+            <div class="label">💬 Bot Response:</div>
+            <pre>{{ bot_response }}</pre>
+        </div>
+    {% endif %}
+
+    {% if extracted_fields %}
+        <div class="section">
+            <div class="label">🧠 Extracted Fields (NER):</div>
+            <pre>{{ extracted_fields.content }}</pre>
+        </div>
+    {% endif %}
+
+    {% if prompt_text %}
+        <div class="section">
+            <div class="label">🧾 Prompt Sent to LLM:</div>
+            <pre>{{ prompt_text }}</pre>
+        </div>
+    {% endif %}
+
+    {% if extracted_json %}
+        <div class="section">
+            <div class="label">📦 Extracted Metadata:</div>
+            <div class="card">
+                {% if extracted_json.title %}
+                    <p><strong>Title:</strong> {{ extracted_json.title }}</p>
+                {% endif %}
+                {% if extracted_json.authors %}
+                    <p><strong>Authors:</strong> {{ extracted_json.authors | join(', ') }}</p>
+                {% endif %}
+                {% if extracted_json.abstract %}
+                    <p><strong>Abstract:</strong> {{ extracted_json.abstract }}</p>
+                {% endif %}
+                {% if extracted_json.subjects %}
+                    <p><strong>Subjects:</strong> {{ extracted_json.subjects | join(', ') }}</p>
+                {% endif %}
+                {% if extracted_json.doi %}
+                    <p><strong>DOI:</strong> <a href="{{ extracted_json.doi }}" target="_blank">{{ extracted_json.doi }}</a></p>
+                {% endif %}
+                {% if extracted_json.method %}
+                    <p><strong>Method:</strong> {{ extracted_json.method }}</p>
+                {% endif %}
+                {% if extracted_json.framework %}
+                    <p><strong>Framework:</strong> {{ extracted_json.framework }}</p>
+                {% endif %}
+                {% if extracted_json.dataset %}
+                    <p><strong>Dataset(s):</strong> {{ extracted_json.dataset | join(', ') }}</p>
+                {% endif %}
+                {% if extracted_json.results %}
+                    <p><strong>Results:</strong> {{ extracted_json.results }}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>
