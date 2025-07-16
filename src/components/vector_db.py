@@ -17,7 +17,7 @@ index_name = "nas-paper"
 
 def create_or_check_index(index_name):
     try:
-        logging.info("Checking Pinecone index status...")
+        logging.info("Checking Pinecone index status...\n")
         indexes = pc.list_indexes()
         # logging.info(f"All indexes: {indexes}")
         # print("All indexes:", indexes)

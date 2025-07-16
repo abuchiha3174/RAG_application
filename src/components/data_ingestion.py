@@ -20,9 +20,10 @@ class DataIngestionLoader:
         self.source = source
         try:
             self.loader = self._select_loader()
+            logging.info(f"✅ Loader selected for source: {self.source}")
         except Exception as e:
             error_msg = CustomException(e, sys)
-            logging.error("❌ Exception Occurred:\n" + str(error_msg))
+            logging.error("❌ Loader initialization failed:\n" + str(error_msg))
             raise error_msg
 
     def _select_loader(self):
@@ -76,13 +77,17 @@ class DataIngestionLoader:
         return WebBaseLoader(self.source)
 
     def load(self):
-        return self.loader.load()
+        try:
+            docs = self.loader.load()
+            logging.info(f"📥 Loaded {len(docs)} document(s) from: {self.source}")
 
-# # ✅ Example usage
-# if __name__ == "__main__":
-#     file = "example.pdf"  # Change this to your actual file path
-#     loader = DataIngestionLoader(file)
-#     documents = loader.load()
+            if docs and hasattr(docs[0], 'page_content'):
+                preview = docs[0].page_content[:300].replace("\n", " ").strip()
+                logging.debug(f"📝 First document preview: {preview}")
 
-#     print(f"Loaded {len(documents)} documents")
-#     print(documents[0].page_content[:300])  # Print preview
+            return docs
+        except Exception as e:
+            error_msg = CustomException(e, sys)
+            logging.error("❌ Failed to load documents:\n" + str(error_msg))
+            raise error_msg
+

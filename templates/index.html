@@ -114,10 +114,10 @@
         </div>
     {% endif %}
 
-    {% if extracted_fields %}
+    {% if parsed_response %}
         <div class="section">
             <div class="label">🧠 Extracted Fields (NER):</div>
-            <pre>{{ extracted_fields.content }}</pre>
+            <pre>{{ parsed_response.content }}</pre>
         </div>
     {% endif %}
 

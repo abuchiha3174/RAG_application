@@ -18,7 +18,7 @@ from urllib.parse import urlparse
 EnvConfig()
 ner = SchemaNER()
 pb = PromptBuilder(
-    system_template = """You are a helpful assistant. 
+    system_template = """ 
         Use the provided context if available to answer the user's question accurately.
 
         {context_section}
@@ -41,7 +41,7 @@ def index():
     extracted_fields = None
     prompt_text = None
     error_message = None
-    parsed_response = None 
+    parsed_response = {}
 
     if request.method == "POST":
         try:
@@ -53,16 +53,17 @@ def index():
             def is_url(text):
                 try:
                     result = urlparse(text)
-                    print(f"URL parsed as: {result}")
+                    print(f"URL parsed as: {result}\n")
                     return all([result.scheme in ("http", "https"), result.netloc])
                 except Exception as e:
-                    print(f"URL check failed: {e}")
+                    print(f"URL check failed: {e}\n")
                     return False
 
             # 🔍 First, try file
             if uploaded_file and uploaded_file.filename != "":
                 upload_dir = "uploads"
                 os.makedirs(upload_dir, exist_ok=True)
+                logging.info(f"Upload directory ensured at: {upload_dir}")
                 file_path = os.path.join(upload_dir, uploaded_file.filename)
                 uploaded_file.save(file_path)
 
@@ -80,15 +81,26 @@ def index():
 
             # 💬 Run NER on original user message (always)
             fields = ner.extract(query=user_message, context=context)
-            parsed_response = fields
-            extracted_fields = fields
+            parsed_response["context_section"] = fields
 
             # Add context and question to prompt fields
-            parsed_response["question"] = user_message
-            parsed_response["context_section"] = context
-
+            parsed_response["user_template"] = user_message
+            parsed_response["context_section"]["context"] = context
+            
+            logging.info("🧾 Final parsed_response with question and context included:\n" +
+            json.dumps(parsed_response, indent=2))
             prompt_messages = pb.get_prompt(**parsed_response)
+            
+            
+            # Log individual message objects
+            logging.info("📤 Prompt messages generated:")
+            for msg in prompt_messages:
+                logging.info(f"→ [{msg.type.upper()}]: {msg.content}")
+            
             prompt_text = "\n".join([f"{msg.type.upper()}: {msg.content}" for msg in prompt_messages])
+            
+            # Log full combined prompt
+            logging.info("🧾 Final formatted prompt to send to LLM:\n" + prompt_text)
 
             bot_response = invoke_OPENAI(prompt_messages)
 
